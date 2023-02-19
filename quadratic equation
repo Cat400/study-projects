@@ -1,0 +1,63 @@
+#include <stdio.h>
+
+#include <math.h>
+
+int main () {
+    float a;
+
+    float b;
+    
+    float c;
+    
+    scanf("%f", &a);
+    
+    scanf("%f", &b);
+    
+    scanf("%f", &c);
+    
+    if (a==0) 
+    {
+        if (b==0) {
+            if (c==0) 
+            {
+             printf("infinitely many solutions");   
+            }
+            else
+            {
+                printf("there are not solutions");
+                
+            }
+        }
+        else
+        {
+            printf("-%f /%f= %f\n", b, c, -b/c);
+    }
+        
+    }
+    else
+    {
+       float D=b*b-4*a*c;
+        
+        if (D<0) {
+            printf("There are not real roots");
+        }
+        
+        else {
+            printf("(-%f-sqrt(%f))/(2*%f)=%f\n"
+            
+            "(-%f+sqrt(%f))/(2*%f))=%f\n",
+            
+            b, D, a, ((-b-sqrt(D))/(2*a)), b, D, a, ((-b+sqrt(D))/(2*a)));
+            
+        }
+        
+    }
+}
+
+
+
+
+
+
+
+
