@@ -1,43 +1,24 @@
 #include <stdio.h>
-
 #include <math.h>
 
- 
-
- int main()
+int main()
 {
-    
     int b;
-    
-     scanf("%d", &b);
-    
-    
-    for(int a=2;a<=b;a++) {
-        
-        int p=1;
-        
-        for(int c=2;c<=3;c++){
-            
+    scanf("%d", &b);
+    for(int a=2;a <= b;a++) 
+    {
+        int parametr=1;
+        for(int c=2;c <= 3;c++)
+        {
             double d=pow(c,a);
-            
             double e=fmod(d,a);
-            
-            int f=e;
-             
-             if(f == c%a) {
-                 
-                 p++;
-                 
-             }
-             
-             if(p==3) { 
-                 
+            if((int)e == c % a) {
+                 parametr++;
+            }
+             if(parametr==3) { 
                  
                  printf("%d\n", a);
-             }
-            
-    
+            }
         }
-        }
-        
+    }
 }
