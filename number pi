@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <math.h>
+
+float sum_gregory(float precision)
+{
+    float result=0;
+    int n=1;
+    while(1)
+    {  
+        result += pow(-1, n - 1) / (2 * n - 1);
+        n++;
+        if((2. / (4 * n * n - 1)) < precision) {
+            break;
+        }
+    }
+    return result * 4 ;
+}
+
+int main ()
+{
+  float degree_precision;
+  scanf("%f", &degree_precision);
+  float precision = exp(-degree_precision * log(10));
+  sum_gregory(precision);
+  printf("%.*f\n", 20, sum_gregory(precision));
+}
+
