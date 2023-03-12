@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <math.h>
+
+float func(float x) 
+{
+    float y = pow(x,3) - 7 * x + 10;
+    return y;
+}
+
+float dfunc(float x)
+{
+    float y = 3 * x * x - 7;
+    return y;
+}
+
+int main()
+{
+    float x;
+    float e;
+    printf("choice x from [-3.23;-3.14] and precision:\n");
+    scanf("%f", &x);
+    scanf("%f", &e);
+    if ((x < -3.23) || (x > -3.14)) {
+        printf("x doesn`t belong to the specified interval");
+    }
+    else {
+    func(x);
+    dfunc(x);
+    float y=x;
+    while(fabs(y-x)<e) 
+    {
+         y=x;
+         x=x-(func(x)/dfunc(x));
+    
+    }
+         printf("%.*f", 8, x);
+        
+    }
+}
+
