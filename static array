@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <math.h>
+#define max_size_mass 5
+
+int size;
+int mass[max_size_mass];
+int max_value(int mass[size], int size) {
+        int maximum;
+        for(int i = 0, maximum = *mass; i < size; i++) {
+            maximum =  (maximum < *(mass + i) ) ? *(mass + i) :  maximum  ;
+            if (i+1 == size) {
+                return maximum;
+            }
+        }
+}
+        
+int min_value(int mass[size], int size) {
+        int minimum;
+        for(int i=0, minimum = *mass; i < size; i++){ 
+            minimum =  (minimum > *(mass + i)) ? *(mass + i) :  minimum  ;
+            if ( i+1 == size) {
+                return minimum;
+            }
+        }
+}
+
+float mean(int *mass, int size) 
+{
+        float aver;
+        for(int i=0, aver=0; i < size; i++) {
+            float a= *(mass + i);
+            aver += (a / size);
+            if( i+1 == size) {
+                return aver;
+            }
+        }
+}
+
+float RMS(int *mass, float average, int size)
+{
+        float deviation;
+        for(int i=0, deviation=0; i < size; i++) {
+            deviation += sqrt(pow((mass[i] - average),2) / size);
+            if(i+1 == size){
+                return deviation;
+            }
+        }
+}
+
+int main()
+{
+    printf("input a size of mass");
+    scanf("%d", &size);
+    size = (size <= max_size_mass) ? size : max_size_mass;
+    for(int x=0; x < size; x++) {
+        printf("mass[%d] = ", x);
+        scanf("%d", &mass[x]);
+    }   
+    mean(mass, size);
+    max_value(mass, size);
+    min_value(mass, size);
+    float (*average)(int*, int);
+    average = mean;
+    RMS(mass, average(mass, size), size);
+    printf("%d, %d\n", max_value(mass, size), min_value(mass, size));
+    printf("%f, %f\n", average(mass, size), RMS(mass, average(mass, size), size));
+}
