@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#define SIZE 5
+
+void swap(int *a, int *b){
+    int c= *a;
+    *a=*b;
+    *b=c;
+}
+
+void sort(int* mass, int size, int a){//a - выбор вида сортировки
+    int indicator = 0;
+    int *pointer = &indicator;
+    while( abs(indicator) < (size - 1)){//когда массив будет отсортирован, для всех пар его элементов условие if будет ложным 
+    for(int i=0, *pointer = 0; i < size; i++) { //по возрастанию или убыванию то же и для абсолютного значения
+            if(
+            (a == 1)&&(mass[i] > mass[i + 1])||\
+            (a == 2)&&(mass[i] < mass[i + 1])||\
+            (a == 3)&&(abs(mass[i]) > abs(mass[i + 1]))||\
+            (a == 4)&&(abs(mass[i]) < abs(mass[i + 1])))
+            {
+            swap(&mass[i], &mass[i+1]);
+            *pointer++;
+        }
+        else {
+            *pointer--;
+        }
+        
+    }
+    }
+}
+    
+
+int main()
+{ 
+    int arr[SIZE];
+    int a;
+    printf("choose a way of sort");
+    //("choise a way of sort the arr: 1 by lowest value, 2 by highest, 3 by absolute lowest, 4 by absolute highest  ");
+    scanf("%d", &a);
+    for(int i=0; i < SIZE; i++){
+    printf("arr[%d]= ", i);
+    scanf("%d", &arr[i]);
+    }
+    int size = SIZE;
+    sort(arr, size, a);
+    for(int i=0; i < SIZE; i++ ){
+        printf("%d\n", *arr+i);
+    }
+}//проблема в том, что компиллятор не запускает программу, поэтому я не могу проверить её
