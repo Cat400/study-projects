@@ -29,7 +29,7 @@ float mean(int *mass, int size)
         float aver;
         for(int i=0, aver=0; i < size; i++) {
             float a= *(mass + i);
-            aver += (a / size);
+            aver += (a / size);\\здесь проблема - aver считается целым
             if( i+1 == size) {
                 return aver;
             }
