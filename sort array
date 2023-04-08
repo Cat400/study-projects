@@ -1,7 +1,6 @@
 #include <stdio.h>
-#include <math.h>
+#include <malloc.h>
 #include <stdlib.h>
-#define SIZE 5
 
 void swap(int *a, int *b){
     int c= *a;
@@ -9,43 +8,70 @@ void swap(int *a, int *b){
     *b=c;
 }
 
-void sort(int* mass, int size, int a){//a - выбор вида сортировки
-    int indicator = 0;
-    int *pointer = &indicator;
-    while( abs(indicator) < (size - 1)){//когда массив будет отсортирован, для всех пар его элементов условие if будет ложным 
-    for(int i=0, *pointer = 0; i < size; i++) { //по возрастанию или убыванию то же и для абсолютного значения
-            if(
-            (a == 1)&&(mass[i] > mass[i + 1])||\
-            (a == 2)&&(mass[i] < mass[i + 1])||\
-            (a == 3)&&(abs(mass[i]) > abs(mass[i + 1]))||\
-            (a == 4)&&(abs(mass[i]) < abs(mass[i + 1])))
-            {
-            swap(&mass[i], &mass[i+1]);
-            *pointer++;
-        }
-        else {
-            *pointer--;
-        }
-        
-    }
+int func_compare(int a, int b, int r){
+    int c;
+    switch(r){
+        case 1:
+       c= (a > b) ? 1 : 0;
+       return c;
+       case 2:
+       c= (a < b) ? 1 : 0;
+       return c;
+       case 3:
+       c= (abs(a) > abs(b)) ? 1 : 0;
+       return c;
+       case 4:
+       c= (abs(a) < abs(b)) ? 1 : 0;
+       return c;
     }
 }
+
+void sort(int* mass, int size, int a){
+    func_compare(mass[a], mass[a+1], a);
+    int indicator_sum;
+    while(1){ 
+    for(int i=0; i+1 < size; i++) {
+        indicator_sum+=func_compare(mass[i], mass[i+1],a);//если для каждой пары элементов массива выполнено условие сортировки
+        if(func_compare(mass[i], mass[i+1], a))//compare каждый раз будет возвращать ноль и indicator_sum тоже будет равна нулю
+            {
+            swap(&mass[i], &mass[i+1]);
+            }
+        }
+        if(indicator_sum==0){
+            break;
+        }
+        else
+        {
+            indicator_sum=0;
+        }
+    } 
+}
+
+
     
 
 int main()
 { 
-    int arr[SIZE];
-    int a;
+    int *arr;
+    int size;
+    int sort_way;
+    printf("put a size of array");
+    scanf("%d", &size);
+    arr= (int*)malloc(size*sizeof(int));
+    if (arr == NULL) {
+        printf("no available memory");
+    }
     printf("choose a way of sort");
-    //("choise a way of sort the arr: 1 by lowest value, 2 by highest, 3 by absolute lowest, 4 by absolute highest  ");
-    scanf("%d", &a);
-    for(int i=0; i < SIZE; i++){
+    //("choise a way of sort the arr: 1 by highest value, 2 by lowest, 3 by absolute highest, 4 by absolute lowest  ");
+    scanf("%d", &sort_way);
+    for(int i=0; i < size; i++){
     printf("arr[%d]= ", i);
     scanf("%d", &arr[i]);
+   }
+    sort(arr, size, sort_way);
+    func_compare(arr[0], arr[1], 1);
+    for(int i=0; i < size; i++ ){
+        printf("%d\n", arr[i]);
     }
-    int size = SIZE;
-    sort(arr, size, a);
-    for(int i=0; i < SIZE; i++ ){
-        printf("%d\n", *arr+i);
-    }
-}//проблема в том, что компиллятор не запускает программу, поэтому я не могу проверить её
+    free(arr);
+}
