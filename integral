@@ -6,7 +6,12 @@ float func(float w)
     float y = pow(w,3) - 7 * w + 10;
     return y;
 }
-void calculation_of_integral(float a, int number_part, float b ) 
+
+float funcx(float x){
+    float y=x;
+    return y;
+}
+float calculation_of_integral(float a, float b, int number_part, float (*func)(float) ) 
 {
     float dx = fabs(a-b)/number_part;
     float lower_limit = (a < b) ?  a : b;
@@ -17,13 +22,17 @@ void calculation_of_integral(float a, int number_part, float b )
          integral += (func(lower_limit) + func(lower_limit + dx)) / 2 * dx;
         
     }
-    printf("%f\n", integral);
+    return integral;
 }
-void absolute_error(float a, float b, int n) 
+float absolute_error(float a, float b, int n, float (*func)(float)) 
 {
     float max_second_derivative = (a < b) ? 6 * b : 6 * a;
     float error = fabs((max_second_derivative * pow((b - a),3)) / (12 * n * n));
-    printf("%f", error);
+    return error;
+}
+
+void print(float func){
+    printf("%f", func);
 }
 
 int main()
@@ -35,7 +44,10 @@ int main()
     scanf("%f", &a);
     scanf("%f", &b);
     scanf("%d", &number_part);
-    calculation_of_integral(a, number_part, b);
-    absolute_error(a,b, number_part);
+    funcx(a);
+    calculation_of_integral(a, b, number_part, funcx);
+    absolute_error(a,b, number_part, funcx);
+    print(calculation_of_integral(a, b, number_part, funcx));
+    print(absolute_error(a,b, number_part, funcx));
 }
 
