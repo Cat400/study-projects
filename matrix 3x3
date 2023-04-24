@@ -3,104 +3,113 @@
 
 FILE *file;
 
-struct matrix{
-    int determinant;
-    float matrix1[3][3];
-    float matrix2[3][3];
-};
+typedef struct{
+    float data[3][3];
+}matrix;
 
-void write_matrix(int choice, float (*p)[3]){
+void write_floatmatrix(matrix p){
     for(int i=0; i<3; i++){
         for(int j=0; j<3; j++){
-            switch(choice){
-                case 0:
                 if((j+1)%3==0){
-                    fprintf(file, "%2f\n", p[i][j]);
+                    fprintf(file, "%2f\n", p.data[i][j]);
                     }
                 else{
-                    fprintf(file, "%2f", p[i][j]);
+                    fprintf(file, "%2f", p.data[i][j]);
                     }
-                break;
-                case 1:
-                if((j+1)%3==0){
-                    fprintf(file, "%2d\n", (int)p[i][j]);
-                    }
-                 else{
-                    fprintf(file, "%2d", (int)p[i][j]);
-                }
-            }
         }
     }
 }
 
-void sum(struct matrix *array){
-    float sum_matrix[3][3];
+void write_intmatrix(matrix p){
     for(int i = 0; i < 3; i++){
         for(int j = 0; j < 3; j++){
-            sum_matrix[i][j] = array->matrix1[i][j] + array->matrix2[i][j];
+                if( ( j + 1 ) % 3 == 0){
+                    fprintf(file, "%2d\n", (int)p.data[i][j]);
+                    }
+                 else{
+                    fprintf(file, "%2d", (int)p.data[i][j]);
+                    }
+        }
+    }
+}
+
+matrix sum(matrix m1, matrix m2){
+    matrix sum_matrix;
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            sum_matrix.data[i][j] = m1.data[i][j] + m2.data[i][j];
             
         }
     }
-    write_matrix(1, sum_matrix);
+    return sum_matrix;
 }
 
 
-void product(struct matrix *array){
-    float product_matrix[3][3];
+matrix product(matrix matrix1, matrix matrix2){
+    matrix product_matrix;
     for(int i = 0; i < 3; i++){
         for(int j = 0; j < 3; j++){
             for(int k = 0; k < 3; k++){
-                product_matrix[i][j]+= array->matrix1[i][k] * array->matrix2[k][j];
+                product_matrix.data[i][j] += matrix1.data[i][k] * matrix2.data[k][j];
             }
         }
     }
-    write_matrix(1,product_matrix);
+    return product_matrix;
 }
 
-void minor(int rows, float (*mass)[rows-1], float(*matrix)[rows], int k, int l){
+void minor(int rows, float (*mass)[rows-1], float (*matrix)[rows], int k, int l){
     int m;
     int a;
-    for(int i=0; i < rows-1; i++){
-        for(int j=0; j < rows-1; j++){
-            m= (j>=k) ?  j+1 : j;
-            a= (i>=l) ?  i+1 : i;
-            mass[i][j]=matrix[a][m];
+    for(int i = 0; i < rows-1; i++){
+        for(int j = 0; j < rows-1; j++){
+            m= (j >= k) ?  j+1 : j;
+            a= (i >= l) ?  i+1 : i;
+            mass[i][j] = matrix[a][m];
         }
     }
 }
 
-int func_determ(int rows, float(*mp)[rows]){
+int func_determ(int rows, float(*p)[rows]){
     int determinant=0;
     for(int i=0; i < rows ; i++){
         if(rows == 1){
-        return mp[0][0];
+        return p[0][0];
         }
         else{
         float mass[rows-1][rows-1];
-        minor(rows, mass, mp, i, 0);
-        determinant += pow(-1, i) * mp[0][i] * func_determ(rows-1, mass);}
+        minor(rows, mass, p, i, 0);
+        determinant += pow(-1, i) * p[0][i] * func_determ(rows-1, mass);}
     }
     return determinant;
 }
 
-void inverse_m(struct matrix *array){
-    int alg_m[3][3];
+matrix inverse_m(int determinant, matrix matrixx){
+   
     float mass[2][2];
-    float inverse_matrix[3][3];
-    if(array->determinant){
-    for(int i=0; i< 3; i++){
-        for(int j=0; j < 3; j++){
-        minor(3,  mass, array->matrix1, i, j);
-        alg_m[i][j]= func_determ(2, mass) * pow(-1, i+j);
-        inverse_matrix[j][i]= (1. / array->determinant) * (float)alg_m[i][j];
+    matrix alg_m;
+    matrix inverse_matrix;
+    if(determinant){
+        for(int i=0; i< 3; i++){
+            for(int j=0; j < 3; j++){
+                minor(3,  mass, matrixx.data, i, j);
+                alg_m.data[i][j]= func_determ(2, mass) * pow(-1, i+j);
+                inverse_matrix.data[j][i]= (1. / determinant) * (float)alg_m.data[i][j];
+            }
         }
-    }
-    write_matrix(0, inverse_matrix);
+    return inverse_matrix;
     }
 }
+
+void func_translate(matrix m, float (*p)[3]){
+    for(int i=0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            p[i][j] = (float)m.data[i][j];
+        }
+    }
+}
+
 int main()
 {
-    struct matrix array;
     char name[10];
     printf("put the name of file not more 9 simbols");
     scanf("%s", name);
@@ -108,25 +117,35 @@ int main()
     if(file == NULL){
         printf("file doesn`t open");
     }
+    matrix M1;
+    matrix M2;
     for(int i = 0; i < 3; i++){
         for(int j = 0; j < 3; j++){
         printf("matrix[%d][%d]= ", i, j);
-        scanf("%f", &array.matrix1[i][j]);
+        scanf("%f", &M1.data[i][j]);
         }
     }
     for(int i = 0; i < 3; i++){
         for(int j = 0; j < 3; j++){
         printf("matrix[%d][%d]= ", i, j);
-        scanf("%f", &array.matrix2[i][j]);
+        scanf("%f", &M2.data[i][j]);
         }
     }
-    func_determ(3, array.matrix1);
-    array.determinant=func_determ(3, array.matrix1);
-    write_matrix(1, array.matrix1);
-    fprintf(file, " determinant is %d\n", func_determ(3, array.matrix1));
-    void (*funcpointer[3])(struct matrix *)={sum, product, inverse_m};
-    for(int i=0; i<3; i++){
-        funcpointer[i];
-    }
+    float translate[3][3];
+    func_translate(M1, translate);
+    func_determ(3, translate);
+    int determinant = func_determ(3, translate);
+    fprintf(file, "your matrix\n");
+    write_intmatrix(M1);
+    fprintf(file, " determinant is %d\n", func_determ(3, translate));
+    sum(M1, M2);
+    product(M1, M2);
+    inverse_m(determinant, M1);
+    fprintf(file, "sum of matrixes\n");
+    write_intmatrix(sum(M1, M2));
+     fprintf(file, "product of matrixes\n");
+    write_intmatrix(product(M1, M2));
+    fprintf(file, "inverse matrix\n");
+    write_floatmatrix(inverse_m(determinant, M1));
     fclose(file);
 }
