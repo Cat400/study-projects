@@ -1,24 +1,60 @@
 #include <stdio.h>
 #include <math.h>
 
-int main()
-{
-    int b;
-    scanf("%d", &b);
-    for(int a=2;a <= b;a++) 
+void func_checkprintnumber2(int number, int less_number){
+    //int less_number=31;
+    int limit = less_number;
+    while(less_number <= number){
+        if(less_number % 2){
+            for(int i = 3; i < limit;){//к примеру, если 61/3 = 20, и 61 не делится на 2 мне не нужно проверять делимость на >=20
+                if(less_number % i){
+                    i += 2;
+                    limit = less_number / i;
+                    //printf("%d", i);
+                    if((i >= limit)&&(less_number % i)){
+                      printf("%d\n", less_number);
+                      break;
+                    }
+                }
+                else{
+                    break;
+                }
+            }
+       }
+        less_number++;
+    }
+}
+
+void func_checkprintfnumber(int number){
+    for(int less_number = 2; less_number <= number; less_number++) 
     {
         int parametr=1;
-        for(int c=2;c <= 3;c++)
+        for(int base_degree = 2; base_degree <= 3; base_degree++)
         {
-            double d=pow(c,a);
-            double e=fmod(d,a);
-            if((int)e == c % a) {
+            double d=pow(base_degree,less_number);//по малой теореме Ферма если число less_number простое 
+            //то некоторое число d = base_degree  в less_number-ой степени имеет тот же остаток, что и base_degree
+            double e=fmod(d, less_number);// по модулю less_number
+            if((int)e == base_degree % less_number) {//int т.к d небольшое
                  parametr++;
             }
-             if(parametr==3) { 
-                 
-                 printf("%d\n", a);
+            //if(less_number > 31){
+              // break;
+            //}
+             if(parametr==3) { //если равенство было выполнено при всех base_degree, число простое и parametr=3;
+                 printf("%d\n", less_number);
             }
         }
+        if(less_number >= 31){
+            break;
+        }
     }
+    func_checkprintnumber2(number, 32);
+}
+
+int main()
+{
+    int number;
+    scanf("%d", &number);
+    func_checkprintfnumber(number);
+    
 }
