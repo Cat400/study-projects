@@ -21,9 +21,9 @@ void write_floatmatrix(matrix p){
 }
 
 void write_intmatrix(matrix p){
-    for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
-                if( ( j + 1 ) % 3 == 0){
+    for(int i=0; i<3; i++){
+        for(int j=0; j<3; j++){
+                if((j+1)%3==0){
                     fprintf(file, "%2d\n", (int)p.data[i][j]);
                     }
                  else{
@@ -60,10 +60,10 @@ matrix product(matrix matrix1, matrix matrix2){
 void minor(int rows, float (*mass)[rows-1], float (*matrix)[rows], int k, int l){
     int m;
     int a;
-    for(int i = 0; i < rows-1; i++){
-        for(int j = 0; j < rows-1; j++){
-            m= (j >= k) ?  j+1 : j;
-            a= (i >= l) ?  i+1 : i;
+    for(int i=0; i < rows-1; i++){
+        for(int j=0; j < rows-1; j++){
+            m= (j>=k) ?  j+1 : j;
+            a= (i>=l) ?  i+1 : i;
             mass[i][j] = matrix[a][m];
         }
     }
@@ -84,7 +84,6 @@ int func_determ(int rows, float(*p)[rows]){
 }
 
 matrix inverse_m(int determinant, matrix matrixx){
-   
     float mass[2][2];
     matrix alg_m;
     matrix inverse_matrix;
@@ -97,14 +96,6 @@ matrix inverse_m(int determinant, matrix matrixx){
             }
         }
     return inverse_matrix;
-    }
-}
-
-void func_translate(matrix m, float (*p)[3]){
-    for(int i=0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
-            p[i][j] = (float)m.data[i][j];
-        }
     }
 }
 
@@ -131,13 +122,11 @@ int main()
         scanf("%f", &M2.data[i][j]);
         }
     }
-    float translate[3][3];
-    func_translate(M1, translate);
-    func_determ(3, translate);
-    int determinant = func_determ(3, translate);
+    func_determ(3, M1.data);
+    int determinant = func_determ(3, M1.data);
     fprintf(file, "your matrix\n");
     write_intmatrix(M1);
-    fprintf(file, " determinant is %d\n", func_determ(3, translate));
+    fprintf(file, " determinant is %d\n", func_determ(3, M1.data));
     sum(M1, M2);
     product(M1, M2);
     inverse_m(determinant, M1);
