@@ -1,60 +1,60 @@
 #include <stdio.h>
 #include <math.h>
 
-void func_checkprintnumber2(int number, int less_number){
-    //int less_number=31;
-    int limit = less_number;
-    while(less_number <= number){
-        if(less_number % 2){
+int checkprime2(int number){
+    int limit = number;
+        if(number % 2){
             for(int i = 3; i < limit;){//к примеру, если 61/3 = 20, и 61 не делится на 2 мне не нужно проверять делимость на >=20
-                if(less_number % i){
+                if(number % i){
                     i += 2;
-                    limit = less_number / i;
+                    limit = number / i;
                     //printf("%d", i);
-                    if((i >= limit)&&(less_number % i)){
-                      printf("%d\n", less_number);
-                      break;
+                    if((i >= limit)&&(number % i)){
+                      return 1;
                     }
                 }
                 else{
-                    break;
+                    return 0;
                 }
             }
        }
-        less_number++;
-    }
+       else{
+           return 0;
+       }
+    
 }
 
-void func_checkprintfnumber(int number){
-    for(int less_number = 2; less_number <= number; less_number++) 
-    {
+int checkprime(int number){
+    
         int parametr=1;
         for(int base_degree = 2; base_degree <= 3; base_degree++)
         {
-            double d=pow(base_degree,less_number);//по малой теореме Ферма если число less_number простое 
-            //то некоторое число d = base_degree  в less_number-ой степени имеет тот же остаток, что и base_degree
-            double e=fmod(d, less_number);// по модулю less_number
-            if((int)e == base_degree % less_number) {//int т.к d небольшое
+            double d=pow(base_degree, number);//по малой теореме Ферма если число number простое 
+            //то некоторое число d = base_degree  в number-ой степени имеет тот же остаток, что и base_degree
+            double e=fmod(d, number);// по модулю number
+            if((int)e == base_degree % number) {//int т.к d небольшое
                  parametr++;
             }
-            //if(less_number > 31){
-              // break;
-            //}
              if(parametr==3) { //если равенство было выполнено при всех base_degree, число простое и parametr=3;
-                 printf("%d\n", less_number);
+                 return 1;
             }
         }
-        if(less_number >= 31){
-            break;
-        }
-    }
-    func_checkprintnumber2(number, 32);
+        return 0;
 }
 
 int main()
 {
     int number;
     scanf("%d", &number);
-    func_checkprintfnumber(number);
-    
+    checkprime(number);
+    checkprime2(number);
+    for(int i = 2; i <= number; i++){
+        if( (i < 31) && ( checkprime(i) ) ){
+            printf("%d\n", i);
+        }
+        if( (i >= 31)&&(checkprime2(i) ) ){
+            printf("%d\n", i);
+            
+        }
+    }
 }
