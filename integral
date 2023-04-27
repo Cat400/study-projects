@@ -24,7 +24,7 @@ float calculation_of_integral(float a, float b, int number_part, float (*func)(f
     }
     return integral;
 }
-float absolute_error(float a, float b, int n, float (*func)(float)) 
+float absolute_error(float a, float b, int n) 
 {
     float max_second_derivative = (a < b) ? 6 * b : 6 * a;
     float error = fabs((max_second_derivative * pow((b - a),3)) / (12 * n * n));
@@ -46,8 +46,7 @@ int main()
     scanf("%d", &number_part);
     funcx(a);
     calculation_of_integral(a, b, number_part, funcx);
-    absolute_error(a,b, number_part, funcx);
+    absolute_error(a,b, number_part);
     print(calculation_of_integral(a, b, number_part, funcx));
-    print(absolute_error(a,b, number_part, funcx));
+    print(absolute_error(a,b, number_part));
 }
-
