@@ -1,0 +1,253 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+FILE *file;
+
+typedef struct{
+    float **data;
+}matrix;
+
+float **memorymatrix(int rows, int cols){
+    if( !rows || !cols){
+        return NULL;
+    }
+    float **m;
+    m = (float **)malloc( sizeof(float*) * rows);
+    for(int i=0; i < rows; i++){
+        m[i] = (float *)malloc( sizeof(float) * cols);
+    }
+    return m;
+}
+    
+void initmatrix(int rows, int cols, matrix p){
+    for(int i=0; i < rows; i++){
+        for(int j=0; j < cols; j++){
+            p.data[i][j]= rand()%7;
+        }
+    }
+}
+
+void intprintmatrix(int rows, int cols, matrix m){//функция записи в файл
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+            if( j+1 == cols){
+                printf("%3d\n", (int)m.data[i][j]);
+            }
+            else{
+                printf("%3d", (int)m.data[i][j]);
+            }
+        }
+    }
+}
+
+void floatprintmatrix(int rows, int cols, matrix m){//floфункция записи в файл
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+            if( j+1 == cols){
+                printf("%3f\n", m.data[i][j]);
+            }
+            else{
+                printf("%3f", m.data[i][j]);
+            }
+        }
+    }
+}
+ 
+void inputmatrix(int rows, int cols, matrix a){
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+            if( j+1 == cols) {
+                fprintf(file, "%3d\n", (int)a.data[i][j]);
+            }
+            else{
+               fprintf(file, "%3d", (int)a.data[i][j]); 
+            }
+        }
+    }
+   
+}
+
+void inputmatrixfloat(int rows, int cols, matrix a){
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+            if( j+1 == cols) {
+                fprintf(file, "%3f\n", a.data[i][j]);
+            }
+            else{
+               fprintf(file, "%3f", a.data[i][j]); 
+            }
+        }
+    }
+   
+}
+
+matrix sum(matrix a, matrix b, int rows, int cols){
+    matrix sum_matrix;
+    sum_matrix.data = memorymatrix(rows, cols);
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+            sum_matrix.data[i][j] = a.data[i][j] + b.data[i][j];
+        }
+    }
+    return sum_matrix;
+}
+
+matrix product(matrix a, matrix b, int rows1, int rows2, int cols2){//cols_1=rows_2, rows_1=rows_3
+    matrix product_matrix;
+    product_matrix.data = memorymatrix(rows1, cols2);
+    for(int i = 0; i < rows1; i++){
+        for(int j = 0; j < cols2; j++){
+            for(int k = 0; k < rows2; k++){
+                product_matrix.data[i][j] += a.data[i][k] * b.data[k][j];
+            }
+        }
+    }
+    return product_matrix;
+}
+
+float get(int rows,  float **m, int row, int col){
+    return m[row][col];
+}
+
+int checkrepeatcol_getrow(int *mass, int col, int rows){//проверяет не повторяется ли номер столбца
+    int row = 0; //и выдает номер свободной строки для данного столбца
+    int m = rows-1;
+    for(int j=0; j < rows; j++){
+        if(mass[j] == col){
+            return -1;// -1 т.к может возникнуть ситуация когда col=row=0
+        }
+        if(mass[j] == -1){
+            row = j;
+            row= (m < row) ? m : row;
+            m = row;
+        }
+    }
+    return row;
+}
+
+int parity_transposition(int *mass, int rows){//подсчитывает четность перестановок и возвращает знак
+    int k = 0;
+    for(int j =0; j < rows-1; j++){
+        for(int i = j+1; i < rows; i++){
+            k= ( mass[j] > mass[i]) ? k+1 : k;
+        }
+    }
+    if(k%2 != 0){
+        return -1;
+    }
+    else{
+        return 1;
+    }
+}
+
+int determ(int rows, int parametr, int *mass, float **m){//parametr нужен для получения минора. Это количество строк
+    int determinant = 0;//которые вы вычеркиваете до передачи "минора" в функцию
+    get( rows, m, 0, 1);//причем при подсчете минора он будет сразу возвращен с необходимым знаком за счет нечетности 
+    parity_transposition(mass, rows);
+    checkrepeatcol_getrow( mass, 1, rows);
+    for(int col = 0; col < rows; col++){
+        int row=0;
+        if( checkrepeatcol_getrow(mass, col, rows) > -1 ){
+            row = checkrepeatcol_getrow(mass, col, rows);
+            mass[row]=col;
+            if( parametr == rows-1){
+                int a = (int)get(rows, m, row, col) * parity_transposition(mass, rows);
+                mass[row] = -1;
+                //printf(" row %d, col %d, get %d\n", row, col, (int)get(rows, m, row, col));
+                return (int)a;
+            }
+            //printf(" row %d, col %d, get %d\n", row, col, (int)get(rows, m, row, col));
+        determinant += (int)get(rows, m, row, col) * determ(rows, parametr+1, mass, m);
+        
+        mass[row] = -1;
+        }
+    }
+    return determinant;
+}
+matrix inverse_m(int rows, int *mass, float **m, int determinant){
+    int alg_m[rows][rows];
+    matrix inverse_matrix;
+    inverse_matrix.data = memorymatrix(rows, rows);
+    determ(rows, 1, mass, m);
+        for(int i=0; i < rows; i++){
+            for(int j=0; j < rows; j++){
+                mass[i]=j;
+                alg_m[i][j] = determ(rows, 1, mass, m);
+                inverse_matrix.data[j][i]= (1. / determinant) * alg_m[i][j];
+            }
+            mass[i]= -1;
+        }
+    return inverse_matrix;
+}
+
+void freef(matrix m, int rows){
+    for(int i=0; i < rows; i++){
+        free(m.data[i]);
+    }
+}
+
+int main()
+{  
+     matrix m1;
+     int rows1;
+     int cols1;
+     matrix m2;
+     int rows2;
+     int cols2;
+     int determinant = 0;
+    printf("put a number the rows and of cols first matrix");
+    scanf("%d", &rows1);
+    scanf("%d", &cols1);
+    printf("put a number the rows and cols of second matrix");
+    scanf("%d", &rows2);
+    scanf("%d", &cols2);
+    m1.data = memorymatrix(rows1, cols1);
+    m2.data = memorymatrix(rows2, cols2);
+    initmatrix(rows1, cols1, m1);
+    initmatrix(rows2, cols2, m2);
+    //printf("matrixxx %f", m1.data[0][1]);
+    intprintmatrix(rows1, cols1, m1);
+    intprintmatrix(rows2, cols2, m2);
+    file = fopen("matrix.txt", "w");
+    if(fopen("matrix.txt", "w") == NULL){
+        printf("file doesn't open");
+    }
+    if(rows1 == cols1){
+        int *mass = malloc(sizeof(int) * rows1);//массив для записи вычеркнутых строк и столбцов при подсчете определит
+        for(int i=0; i < rows1; i++){
+            mass[i]=-1;
+        }
+        printf("mass %f\n", m1.data[1][1]);
+        determ(rows1, 0, mass, m1.data);
+        int determinant = determ(rows1, 0, mass, m1.data);
+        //printf(" rowws %f\n", m1.data[0]+1);
+        printf("determinant of matrix %d\n", determinant);
+        fprintf(file, "determinant %d\n", determinant);
+        if(determinant){
+            matrix inverse = inverse_m(rows1, mass, m1.data, determinant);
+            floatprintmatrix(rows1, rows1, inverse);
+            fprintf(file, "inverse matrix\n");
+            inputmatrixfloat(rows1, cols1, inverse);
+            freef(inverse, rows1);
+        }
+        free(mass);
+    }
+    if((cols1 == cols2)&&( rows1 == rows2)){
+        matrix summ = sum(m1, m2, rows1, cols1);
+        intprintmatrix(rows1, cols1, summ);
+        fprintf(file, "sum matrix\n");
+        inputmatrix(rows1, cols1, summ);
+         freef(summ,rows1);
+    }
+    if(cols1 == rows2){
+        matrix productt = product(m1, m2, rows1, rows2, cols2);
+        intprintmatrix(rows1, cols2, productt);
+        fprintf(file, "product matrix\n");
+        inputmatrix(rows1, cols2, productt);
+        freef(productt, rows1);
+    }
+    
+    fclose(file);
+    freef(m1, rows1);
+    freef(m2, rows2);
+} 
