@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <math.h>
+
+float func(float x) 
+{
+    float y = pow(x,3) - 7 * x + 10;
+    return y;
+}
+
+float dfunc(float x, float (*func)(float))
+{
+    float dx = pow(10, -5);
+    float y = ( func(x + dx) - func(x)) / dx ;
+    return y;
+}
+
+float solve_problem(float x, float precision, float (*func)(float), float (*dfunc)(float, float(*)(float))){
+    float y=x;
+    while( fabs(y-x) < precision) 
+    {
+         y = x;
+         x = x - ( func(x) / dfunc(x, func) ) ;
+    }
+    return x;
+}
+
+int main()
+{
+    float x;
+    float precision;
+    printf("choice x from [-3.23;-3.14] and precision:\n");
+    scanf("%f", &x);
+    scanf("%f", &precision);
+    if ((x < -3.23) || (x > -3.14)) {
+        printf("x doesn`t belong to the specified interval");
+    }
+    else {
+    func(x);
+    dfunc(x, func);
+    solve_problem(x, precision, func, dfunc);
+    printf("%.*f", 8, solve_problem(x, precision, func, dfunc));
+    }
+}

@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <math.h>
+
+int checkprime2(int number){
+    int limit = number;
+        if(number % 2){
+            for(int i = 3; i < limit;){//к примеру, если 61/3 = 20, и 61 не делится на 2 мне не нужно проверять делимость на >=20
+                if(number % i){
+                    i += 2;
+                    limit = number / i;
+                    //printf("%d", i);
+                    if((i >= limit)&&(number % i)){
+                      return 1;
+                    }
+                }
+                else{
+                    return 0;
+                }
+            }
+       }
+       else{
+           return 0;
+       }
+    
+}
+
+int checkprime(int number){
+    
+        int parametr=1;
+        for(int base_degree = 2; base_degree <= 3; base_degree++)
+        {
+            double d=pow(base_degree, number);//по малой теореме Ферма если число number простое 
+            //то некоторое число d = base_degree  в number-ой степени имеет тот же остаток, что и base_degree
+            double e=fmod(d, number);// по модулю number
+            if((int)e == base_degree % number) {//int т.к d небольшое
+                 parametr++;
+            }
+             if(parametr==3) { //если равенство было выполнено при всех base_degree, число простое и parametr=3;
+                 return 1;
+            }
+        }
+        return 0;
+}
+
+int main()
+{
+    int number;
+    scanf("%d", &number);
+    checkprime(number);
+    checkprime2(number);
+    for(int i = 2; i <= number; i++){
+        if( (i < 31) && ( checkprime(i) ) ){
+            printf("%d\n", i);
+        }
+        if( (i >= 31)&&(checkprime2(i) ) ){
+            printf("%d\n", i);
+            
+        }
+    }
+}
